@@ -1,4 +1,4 @@
-using BioModelsLoader, Test, SBML
+using BioModelsLoader, Test, SBML, JSON3
 
 id = "MODEL8568434338"
 m = BioModelsLoader.readSBMLBioModel(id)
