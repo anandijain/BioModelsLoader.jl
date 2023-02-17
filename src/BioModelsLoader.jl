@@ -6,17 +6,14 @@ using Base.Threads
 const ALL_ODE_MODELS_SEARCH = "*:* AND modellingapproach:\"Ordinary differential equation model\"&domain=biomodels"
 SEARCH_URI = URI("https://www.ebi.ac.uk/biomodels/search")
 
-DEFAULT_CONVERT_FUNCTION = doc -> begin
-    set_level_and_version(3, 2)(doc)
-    convert_promotelocals_expandfuns(doc)
-end
-
 function default_convert_function(level, version)
     doc -> begin
         set_level_and_version(level, version)(doc)
         convert_promotelocals_expandfuns(doc)
     end
 end
+
+DEFAULT_CONVERT_FUNCTION = default_convert_function(3, 2)
 
 function string_from_url(url; headers=[])
     io = IOBuffer()
@@ -37,12 +34,13 @@ function biomodel_url(id)
     "https://www.ebi.ac.uk/biomodels/model/download/$(id)?filename=$(fn)"
 end
 
-function readSBMLBioModel(id; conv_f=DEFAULT_CONVERT_FUNCTION)
+function get_biomodel(id; conv_f=DEFAULT_CONVERT_FUNCTION)
     # change this to SBML.readSBMLFromURL once https://github.com/LCSB-BioCore/SBML.jl/pull/241 is merged
     readSBMLFromURL(biomodel_url(id); conv_f)
 end
 
-"used to get the number of matches to the search"
+download_biomodel(id) = string_from_url(biomodel_url(id))
+
 function query_endpoint(query; base=SEARCH_URI)
     JSON3.read(string_from_url(string(URI(base; query))))
 end
@@ -52,7 +50,7 @@ function biomodels_index(; search_term="sbml", query=["query" => search_term, "f
     m = query_endpoint(query).matches
     js = []
     Threads.@threads for i in 0:100:(m+(100-(m%100)))
-        # @info i
+        @info i
         query = ["query" => search_term, "offset" => i, "numResults" => 100, "format" => "json"]
         append!(js, query_endpoint(query).models)
     end

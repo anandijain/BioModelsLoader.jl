@@ -1,8 +1,8 @@
 using BioModelsLoader, Test, SBML, JSON3
 
 id = "MODEL8568434338"
-m = BioModelsLoader.readSBMLBioModel(id)
-m = BioModelsLoader.readSBMLBioModel(id; conv_f=BioModelsLoader.default_convert_function(3, 1))
+m = BioModelsLoader.get_biomodel(id)
+m = BioModelsLoader.get_biomodel(id; conv_f=BioModelsLoader.default_convert_function(3, 1))
 @test length(m.reactions) == 249
 
 index = BioModelsLoader.biomodels_index()
