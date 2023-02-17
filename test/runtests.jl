@@ -26,5 +26,5 @@ ids = map(x -> x.id, odes)
 dir = joinpath(@__DIR__, "logs/odes/")
 mkpath(dir)
 
-get_archive(ids[1:10], dir)
+BioModelsLoader.get_archive(ids[1:10], dir)
 @test length(readdir(dir)) == 10
