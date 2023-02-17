@@ -57,4 +57,10 @@ function biomodels_index(; search_term="sbml", query=["query" => search_term, "f
     js
 end
 
+function get_archive(ids, dir)
+    Threads.@threads for id in ids
+        write(joinpath(dir, "$id.xml"), BioModelsLoader.download_biomodel(id))
+    end
+end
+
 end # module BioModelsLoader

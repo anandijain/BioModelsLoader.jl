@@ -21,3 +21,10 @@ odes = BioModelsLoader.biomodels_index(; search_term=BioModelsLoader.ALL_ODE_MOD
 mkpath("logs/")
 JSON3.write("logs/sbmls.json", sbmls)
 JSON3.write("logs/odes.json", odes)
+
+ids = map(x -> x.id, odes)
+dir = joinpath(@__DIR__, "logs/odes/")
+mkpath(dir)
+
+get_archive(ids[1:10], dir)
+@test length(readdir(dir)) == 10
